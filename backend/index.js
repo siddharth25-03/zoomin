@@ -15,14 +15,14 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: 'https://zoomin-theta.vercel.app',
+    origin: 'https://zoominn.vercel.app',
     methods: ['GET', 'POST'],
     credentials: true,
   },
 });
 
 app.use(cors({
-  origin: 'https://zoomin-theta.vercel.app',
+  origin: 'https://zoominn.vercel.app',
   methods: ['GET', 'POST'],
   credentials: true,
 }));
