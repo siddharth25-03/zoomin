@@ -64,7 +64,7 @@ function Multiplayer() {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io('https://zoomin-backend.onrender.com');
     setSocket(newSocket);
 
     newSocket.on('roomCreated', ({ roomCode, playerName, isHost }) => {
