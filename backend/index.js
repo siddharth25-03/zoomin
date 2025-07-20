@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
           currentImage: null,
           currentObjectName: '',
           hintCount: 3,
-          size: 80,
+          size: 120,
           time: 30,
           revealedIndices: [],
           correctPlayers: [],
@@ -256,7 +256,7 @@ io.on('connection', (socket) => {
         return;
       }
       if (room.gameState.hintCount > 0) {
-        const newSize = room.gameState.size + 50;
+        const newSize = room.gameState.size + 10000000;
         const newHintCount = room.gameState.hintCount - 1;
         await db.collection('rooms').updateOne(
           { roomCode },
@@ -349,7 +349,7 @@ io.on('connection', (socket) => {
       currentImage: randomObj.url || '/images/default.jpg',
       currentObjectName: randomObj.name,
       hintCount: 3,
-      size: 80,
+      size: 120,
       time: 30,
       revealedIndices: [],
       correctPlayers: [],

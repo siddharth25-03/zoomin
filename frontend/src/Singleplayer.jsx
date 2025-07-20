@@ -11,7 +11,7 @@ const MotionDiv = motion.div;
 function Singleplayer() {
   const [objectName, setObjectName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [size, setSize] = useState(80);
+  const [size, setSize] = useState(120);
   const [count, setCount] = useState(3);
   const [guess, setGuess] = useState('');
   const [time, settime] = useState(30);
@@ -128,7 +128,7 @@ function Singleplayer() {
 
   const settingsize = () => {
     if (count > 0) {
-      setSize(size + 50);
+      setSize(size + 1000000000);
       setCount(count - 1);
     } else {
       alert('You are out of hints');
@@ -141,7 +141,7 @@ function Singleplayer() {
       setcount_of_correct(count_of_correct + 1);
       setScore(score + (time * 10));
       setTimeout(() => {
-        setSize(80);
+        setSize(120);
         fetchRandomImage();
         settime(30);
         setrevealedindex([]);
