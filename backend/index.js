@@ -15,14 +15,14 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: 'https://zoomin-k6bj.onrender.com',
     methods: ['GET', 'POST'],
     credentials: true,
   },
 });
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://zoomin-k6bj.onrender.com',
   methods: ['GET', 'POST'],
   credentials: true,
 }));
