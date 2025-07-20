@@ -108,7 +108,7 @@ function Singleplayer() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/api/submit-score', {
+      const response = await fetch('https://zoomin-backend.onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: playerName, score }),
