@@ -20,7 +20,11 @@ function Singleplayer() {
   const [revealedindex, setrevealedindex] = useState([]);
   const [score, setScore] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
-
+  const [count_of_correct, setcount_of_correct] = useState(0);
+  const [showModal, setshowModal] = useState(false);
+  const guessCorrect=false;
+  const [submitmodal,setsubmitmodal]=useState(false);
+  const [playerName,setPlayerName]=useState('');
   const showOverlay = true;
 
   useEffect(() => {
@@ -32,8 +36,9 @@ function Singleplayer() {
     if (time <= 0) {
       let s = guess;
       if (s.toLowerCase().trim() !== objectName.toLowerCase()) {
-        alert("You lost");
-        navigate(-1);
+        // alert("You lost");
+        setshowModal(true);
+        // navigate(-1);
         return;
       }
     }
@@ -97,6 +102,30 @@ function Singleplayer() {
     setIsCorrect(false);
   };
 
+  const submitScore = async () => {
+    if (!playerName.trim()) {
+      alert('Please enter a player name');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:3000/api/submit-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: playerName, score }),
+      });
+      if(response.ok){
+        alert('score submitted successfully');
+        navigate('/');
+      }
+      if (!response.ok) {
+        throw new Error('Failed to submit score');
+      }
+    } catch (err) {
+      console.error('Error submitting score:', err);
+      alert('Failed to submit score. Please try again.');
+    }
+  };
+
   const settingsize = () => {
     if (count > 0) {
       setSize(size + 50);
@@ -109,6 +138,7 @@ function Singleplayer() {
   const checkanswer = (ans) => {
     if (ans.toLowerCase().trim() === objectName.toLowerCase()) {
       setIsCorrect(true);
+      setcount_of_correct(count_of_correct + 1);
       setScore(score + (time * 10));
       setTimeout(() => {
         setSize(80);
@@ -117,7 +147,8 @@ function Singleplayer() {
         setrevealedindex([]);
       }, 2000);
     } else {
-      alert('❌ Wrong answer');
+      // alert('❌ Wrong answer');
+      setshowModal(true);
     }
   };
 
@@ -147,11 +178,14 @@ function Singleplayer() {
               <Trophy className="w-6 h-6 text-purple-400" />
               <span className="text-purple-300 font-bold text-xl">Score: {score}</span>
             </div>
-            <div className={`flex items-center space-x-3 px-6 py-3 rounded-full border transition-all duration-300 ${
-              time <= 10 
-                ? 'bg-red-900/50 border-red-500/50 animate-pulse' 
+            <div className="flex items-center space-x-3 bg-slate-800/50 backdrop-blur px-6 py-3 rounded-full border border-purple-500/30">
+              <Trophy className="w-6 h-6 text-purple-400" />
+              <span className="text-purple-300 font-bold text-xl">Guessed correclty: {count_of_correct}</span>
+            </div>
+            <div className={`flex items-center space-x-3 px-6 py-3 rounded-full border transition-all duration-300 ${time <= 10
+                ? 'bg-red-900/50 border-red-500/50 animate-pulse'
                 : 'bg-slate-800/50 border-blue-500/30'
-            }`}>
+              }`}>
               <Timer className={`w-6 h-6 ${time <= 10 ? 'text-red-400' : 'text-blue-400'}`} />
               <span className={`font-bold text-xl ${time <= 10 ? 'text-red-300' : 'text-blue-300'}`}>
                 {time}s
@@ -221,10 +255,10 @@ function Singleplayer() {
                 onClick={settingsize}
                 disabled={count === 0}
                 className={`px-10 py-5 rounded-2xl font-bold text-xl lg:text-2xl transition-all duration-300 shadow-xl
-                           ${count > 0 
-                             ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:shadow-yellow-500/30 border border-yellow-500/50' 
-                             : 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600'
-                           }`}
+                           ${count > 0
+                    ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:shadow-yellow-500/30 border border-yellow-500/50'
+                    : 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600'
+                  }`}
               >
                 <div className="flex items-center space-x-3">
                   <Eye className="w-6 h-6" />
@@ -265,7 +299,6 @@ function Singleplayer() {
                   placeholder="What do you see? Type your guess..."
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && checkanswer(guess)}
                   className="w-full px-8 py-5 bg-slate-800/70 backdrop-blur-md border border-purple-500/30 rounded-3xl 
                              text-white text-xl lg:text-2xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 
                              focus:border-transparent transition-all duration-300 shadow-xl"
@@ -287,7 +320,104 @@ function Singleplayer() {
           </div>
         </div>
       </div>
+      {showModal && (
+        <MotionDiv
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+          {(!guessCorrect || time<=0) && <div className="bg-black/30 backdrop-blur-lg border border-purple-500/50 rounded-2xl p-8 sm:p-10 w-[90%] max-w-md text-white shadow-2xl">
+            {time>0 && <h2 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 text-center">
+              {guessCorrect ? '🎉 Congratulations!' : '❌ Incorrect Guess'}
+            </h2>}
+            {time<=0 && <h2 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 text-center">
+              {guessCorrect ? '🎉 Congratulations!' : '❌ Time out'}
+            </h2>}
+
+            <div className="text-center space-y-4">
+              {time<=0 && <p className="text-lg">
+                Sorry, you ran out of time
+              </p>}
+
+              {time<=0 && (
+                <p className="text-base italic text-purple-300">
+                  The object was "<span className="font-semibold">{objectName}</span>".
+                </p>
+              )}
+
+              {time<=0 && <p className="text-lg font-medium">
+                Total Score: <span className="font-bold text-purple-200">{score}</span>
+              </p>}
+            </div>
+
+            {time<=0 && !guessCorrect && <button
+              onClick={() => navigate('/')}
+              className="mt-8 w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md hover:shadow-purple-500/40 transition-all duration-300 border border-purple-500/30"
+            >
+              Back to Home
+            </button>}
+
+            {time<=0 && !guessCorrect && <button
+              onClick={()=>setsubmitmodal(true)}
+              className="mt-8 w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md hover:shadow-purple-500/40 transition-all duration-300 border border-purple-500/30"
+            >
+              Submit Score
+            </button>}
+
+              {!guessCorrect && time>0 && <button
+              onClick={() => setshowModal(false)}
+              className="mt-8 w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md hover:shadow-purple-500/40 transition-all duration-300 border border-purple-500/30"
+            >
+              Close.
+            </button>}
+
+          </div>}
+        </MotionDiv>
+      )}
+      {submitmodal && (
+        <MotionDiv
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+          <div className="bg-black/30 backdrop-blur-lg border border-purple-500/50 rounded-2xl p-8 sm:p-10 w-[90%] max-w-md text-white shadow-2xl">
+            <h2 className="text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 text-center">
+              Game Over!
+            </h2>
+            <div className="text-center space-y-4">
+              <p className="text-lg">
+                Your final score: <span className="font-bold text-purple-200">{score}</span>
+              </p>
+              <p className="text-lg">Enter your name to submit your score to the leaderboard:</p>
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className="w-full px-6 py-3 bg-slate-800/70 backdrop-blur-md border border-purple-500/30 rounded-xl text-white text-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300"
+              />
+            </div>
+            <div className="flex space-x-4 mt-8">
+              <button
+                onClick={submitScore}
+                className="flex-1 bg-gradient-to-r from-green-500 to-teal-500 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md hover:shadow-green-500/40 transition-all duration-300 border border-green-500/30"
+              >
+                Submit Score
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold text-lg shadow-md hover:shadow-purple-500/40 transition-all duration-300 border border-purple-500/30"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </MotionDiv>
+      )}
     </div>
+
   );
 }
 
