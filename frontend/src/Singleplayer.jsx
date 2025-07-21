@@ -180,7 +180,7 @@ function Singleplayer() {
             </div>
             <div className="flex items-center space-x-3 bg-slate-800/50 backdrop-blur px-6 py-3 rounded-full border border-purple-500/30">
               <Trophy className="w-6 h-6 text-purple-400" />
-              <span className="text-purple-300 font-bold text-xl">Guessed correclty: {count_of_correct}</span>
+              <span className="text-purple-300 font-bold text-xl">Guessed correctly: {count_of_correct}</span>
             </div>
             <div className={`flex items-center space-x-3 px-6 py-3 rounded-full border transition-all duration-300 ${time <= 10
                 ? 'bg-red-900/50 border-red-500/50 animate-pulse'
