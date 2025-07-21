@@ -39,7 +39,6 @@ function Singleplayer() {
         // alert("You lost");
         setshowModal(true);
         // navigate(-1);
-        return;
       }
     }
     else settime(time - 1);
