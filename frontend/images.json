@@ -38,6 +38,9 @@
     {"name":"telephone","url":"./telephone.jpg"},
     {"name":"taxi","url":"./taxi.jpg"},
     {"name":"glass","url":"./glass.jpg"}, 
+    {"name":"stool","url":"./stool.jpg"}, 
+    {"name":"camera","url":"./camera.jpg"},
+    {"name":"broccoli","url":"./broccolinew.jpg"}, 
     {"name":"crown","url":"./crown.jpg"}
 ]
 
